@@ -11,7 +11,6 @@ import de.bennetkrause.fdp.graph.Graph;
 import de.bennetkrause.fdp.graph.Vertex;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -152,6 +151,20 @@ public class MainWindow extends Application {
 
 		return new Graph(new HashSet<>(Arrays.asList(a, b, c, d, e, f, g, h)),
 				new HashSet<>(Arrays.asList(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12)));
+	}
+	
+	private Graph createGraph3() {
+
+		Vertex a = new Vertex();
+		Vertex b = new Vertex();
+		Vertex c = new Vertex();
+
+		Edge e1 = new Edge(a, b);
+		Edge e2 = new Edge(a, c);
+		Edge e3 = new Edge(b, c);
+
+		return new Graph(new HashSet<>(Arrays.asList(a, b, c)),
+				new HashSet<>(Arrays.asList(e1, e2, e3)));
 	}
 
 	private Graph createTree1() {

@@ -56,7 +56,7 @@ public class ForceDirectedPlacement implements Runnable {
 		iteration = 0;
 		equilibriumReached = false;
 
-		area = frameWidth * frameHeight;
+		area = Math.min(frameWidth * frameWidth, frameHeight * frameHeight);
 		k = Math.sqrt(area / g.getVertices().size());
 		t = frameWidth / 10;
 
@@ -173,12 +173,12 @@ public class ForceDirectedPlacement implements Runnable {
 
 	private Map<Double, Integer> optimizeCoolingRate(boolean forceAttrLog) {
 		Map<Double, Integer> res = new HashMap<>();
-		for (coolingRate = 0.005; coolingRate <= 1; coolingRate += 0.001) {
+		for (coolingRate = 0.005; coolingRate <= 0.4; coolingRate += 0.001) {
 			int iters = 0;
-			for (int i = 0; i < 25; i++) {
+			for (int i = 0; i < 5; i++) {
 				iters += startSimulation(forceAttrLog);
 			}
-			iters /= 25;
+			iters /= 5;
 			res.put(coolingRate, iters);
 			System.out.println("r: " + (float) coolingRate + " : " + iters);
 		}
