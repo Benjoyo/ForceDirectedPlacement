@@ -18,7 +18,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class MainWindow extends Application {
+public class MainWindow {
 
 	private static final Color VERTEX_FILL_COLOR = Color.WHITESMOKE;
 	private static final Color VERTEX_CIRCLE_COLOR = Color.BLACK;
@@ -35,11 +35,7 @@ public class MainWindow extends Application {
 	private int delay = 10;
 	private boolean chart = false;
 
-	public static void main(String[] args) {
-		launch(args);
-	}
-
-	@Override
+	
 	public void start(Stage primaryStage) {
 
 		parseParameters();
@@ -216,7 +212,7 @@ public class MainWindow extends Application {
 	}
 
 	private void parseParameters() {
-		Map<String, String> params = getParameters().getNamed();
+		Map<String, String> params = null;
 		// frame size specified?
 		if (params.containsKey("width") && params.containsKey("height")) {
 			try {
