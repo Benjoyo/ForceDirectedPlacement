@@ -1,4 +1,4 @@
-package de.bennetkrause.fdp.view.controller;
+package main.java.de.bennetkrause.fdp.view.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;

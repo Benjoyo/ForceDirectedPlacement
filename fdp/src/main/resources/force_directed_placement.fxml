@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="975.0" prefHeight="600.0" prefWidth="975.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="controller.WindowController">
+  <children>
+    <HBox fx:id="hbox" minWidth="-1.0" prefHeight="600.0" prefWidth="975.0"  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <VBox disable="false" minHeight="-Infinity" minWidth="-Infinity" opacity="1.0" prefHeight="600.0" prefWidth="175.0" visible="true" HBox.hgrow="NEVER">
+          <children>
+            <Label text="Stop Criterion">
+              <font>
+                <Font name="System Bold" size="12.0" fx:id="x2" />
+              </font>
+              <VBox.margin>
+                <Insets left="10.0" top="10.0" fx:id="x1" />
+              </VBox.margin>
+            </Label>
+            <RadioButton fx:id="iterationRadioButton" mnemonicParsing="false" onAction="#stopCriterionSelected" text="Iterations" VBox.margin="$x1" VBox.vgrow="NEVER">
+              <toggleGroup>
+                <ToggleGroup fx:id="stop_criterion" />
+              </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="mechEquiRadioButton" mnemonicParsing="false" onAction="#stopCriterionSelected" selected="true" text="Mechanical Equilibrium" toggleGroup="$stop_criterion" VBox.margin="$x1" />
+            <HBox prefHeight="-1.0" prefWidth="200.0">
+              <children>
+                <Label fx:id="criterionLabel" prefWidth="-1.0" text="Threshold" HBox.hgrow="NEVER" HBox.margin="$x1" />
+                <TextField fx:id="criterionTextField" prefWidth="96.0">
+                  <HBox.margin>
+                    <Insets left="5.0" top="10.0" />
+                  </HBox.margin>
+                </TextField>
+              </children>
+            </HBox>
+            <Label font="$x2" text="Forces" VBox.margin="$x1" />
+            <Label text="Attractive Force(s)" VBox.margin="$x1" />
+            <TextField id="attrA" fx:id="attractiveForcesTextField" prefWidth="200.0">
+              <VBox.margin>
+                <Insets left="10.0" right="10.0" top="5.0" />
+              </VBox.margin>
+            </TextField>
+            <Label text="Repulsive Force(s)">
+              <VBox.margin>
+                <Insets bottom="5.0" left="10.0" top="10.0" />
+              </VBox.margin>
+            </Label>
+            <TextField fx:id="repulsiveForcesTextField" prefWidth="200.0">
+              <VBox.margin>
+                <Insets left="10.0" right="10.0" fx:id="x3" />
+              </VBox.margin>
+            </TextField>
+            <Label font="$x2" text="Cooling Rate">
+              <VBox.margin>
+                <Insets bottom="10.0" left="10.0" top="10.0" fx:id="x4" />
+              </VBox.margin>
+            </Label>
+            <TextField fx:id="coolingRateTextField" prefWidth="200.0" VBox.margin="$x3" />
+            <Button mnemonicParsing="false" onAction="#findOptimumClicked" text="Find Optimum...">
+              <VBox.margin>
+                <Insets left="10.0" top="5.0" />
+              </VBox.margin>
+            </Button>
+            <Label font="$x2" text="Graph" VBox.margin="$x4" />
+            <ChoiceBox fx:id="graphChoiceBox" prefWidth="155.0">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Random" />
+                  <String fx:value="Linear" />
+                  <String fx:value="Grid" />
+                  <String fx:value="Ring" />
+                  <String fx:value="Star" />
+                  <String fx:value="Wheel" />
+                  <String fx:value="Hyper Cube" />
+                </FXCollections>
+              </items>
+              <VBox.margin>
+                <Insets left="10.0" />
+              </VBox.margin>
+            </ChoiceBox>
+            <HBox prefHeight="-1.0" prefWidth="200.0">
+              <children>
+                <Label text="Size" HBox.margin="$x1" />
+                <TextField fx:id="graphSizeTextField" prefWidth="121.0">
+                  <HBox.margin>
+                    <Insets left="10.0" right="10.0" top="10.0" />
+                  </HBox.margin>
+                </TextField>
+              </children>
+            </HBox>
+            <Label font="$x2" text="Frame Delay" VBox.margin="$x4" />
+            <HBox prefHeight="-1.0" prefWidth="200.0">
+              <children>
+                <TextField fx:id="frameDelayTextField" prefWidth="128.00009999999747">
+                  <HBox.margin>
+                    <Insets left="10.0" right="5.0" />
+                  </HBox.margin>
+                </TextField>
+                <Label text="ms">
+                  <HBox.margin>
+                    <Insets right="10.0" />
+                  </HBox.margin>
+                </Label>
+              </children>
+            </HBox>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#simulateClicked" text="Simulate" VBox.vgrow="NEVER">
+              <VBox.margin>
+                <Insets bottom="10.0" left="10.0" top="10.0" fx:id="x4" />
+              </VBox.margin>
+            </Button>
+          </children>
+        </VBox>
+        <Pane fx:id="pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+  </children>
+</AnchorPane>
