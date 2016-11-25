@@ -1,20 +1,5 @@
-package fdp;
+package view;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-
-import javax.vecmath.Vector2d;
-
-import fdp.graph.Edge;
-import fdp.graph.Graph;
-import fdp.graph.Vertex;
-import javafx.animation.AnimationTimer;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class MainWindow {

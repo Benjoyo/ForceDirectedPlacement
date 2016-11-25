@@ -1,4 +1,4 @@
-package de.bennetkrause.fdp;
+package fdp;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class App extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
@@ -17,12 +17,14 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 
-		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("force_directed_placement.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/force_directed_placement.fxml"));
 
 		primaryStage.setTitle("Force-directed Placement Demo");
 
-		primaryStage.setScene(new Scene(root, 975, 600));
+		primaryStage.setScene(new Scene(root));
 		primaryStage.setOnCloseRequest(e -> System.exit(0));
 		primaryStage.show();
+		primaryStage.setMinWidth(primaryStage.getWidth());
+		primaryStage.setMinHeight(primaryStage.getHeight());
 	}
 }

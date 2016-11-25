@@ -9,9 +9,9 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="975.0" prefHeight="600.0" prefWidth="975.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="controller.WindowController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="975.0" prefHeight="600.0" prefWidth="975.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="view.controller.WindowController">
   <children>
-    <HBox fx:id="hbox" minWidth="-1.0" prefHeight="600.0" prefWidth="975.0"  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <HBox fx:id="hbox" minWidth="-1.0" prefHeight="600.0" prefWidth="975.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
         <VBox disable="false" minHeight="-Infinity" minWidth="-Infinity" opacity="1.0" prefHeight="600.0" prefWidth="175.0" visible="true" HBox.hgrow="NEVER">
           <children>

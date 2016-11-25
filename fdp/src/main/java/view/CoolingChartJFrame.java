@@ -1,4 +1,4 @@
-package de.bennetkrause.fdp;
+package view;
 
 import java.awt.BorderLayout;
 import java.util.Map;
