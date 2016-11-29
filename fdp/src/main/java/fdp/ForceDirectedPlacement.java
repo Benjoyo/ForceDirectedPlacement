@@ -7,17 +7,19 @@ import java.util.Map.Entry;
 import javax.vecmath.Vector2d;
 
 import org.jgrapht.Graph;
-import org.quark.jasmine.Compile;
-import org.quark.jasmine.Expression;
 
 import fdp.graph.Edge;
 import fdp.graph.Vertex;
+import parsii.eval.Expression;
+import parsii.eval.Parser;
+import parsii.eval.Scope;
+import parsii.eval.Variable;
+import parsii.tokenizer.ParseException;
 
 public class ForceDirectedPlacement implements Runnable {
 
 	private Graph<Vertex, Edge> g;
 
-	// command line arguments
 	private int frameWidth;
 	private int frameHeight;
 	private boolean equi;
@@ -30,13 +32,17 @@ public class ForceDirectedPlacement implements Runnable {
 	private int area;
 	private double k;
 	private double t;
-	private Expression fa;
-	private Expression fr;
+	
+	private Scope scope = Scope.create();
+	private Variable varD = scope.getVariable("d");
+	private Variable varK = scope.getVariable("k");
+	private Expression attractiveForceExpr;
+	private Expression repulsiveForceExpr;
 
 	private boolean equilibriumReached = false;
 
-	public ForceDirectedPlacement(Graph<Vertex, Edge> g, int frameWidth, int frameHeight, String attractiveForce, String repulsiveForce, boolean equi, double criterion,
-			double coolingRate, int delay) {
+	public ForceDirectedPlacement(Graph<Vertex, Edge> g, int frameWidth, int frameHeight, String attractiveForceString,
+			String repulsiveForceString, boolean equi, double criterion, double coolingRate, int delay) throws ParseException {
 		this.g = g;
 		this.frameWidth = frameWidth;
 		this.frameHeight = frameHeight;
@@ -44,9 +50,9 @@ public class ForceDirectedPlacement implements Runnable {
 		this.criterion = criterion;
 		this.coolingRate = coolingRate;
 		this.delay = delay;
-		System.out.println(attractiveForce + repulsiveForce);
-		this.fa = Compile.expression(attractiveForce, false);
-		this.fr = Compile.expression(repulsiveForce, false);
+
+		attractiveForceExpr = Parser.parse(attractiveForceString, scope);
+		repulsiveForceExpr = Parser.parse(repulsiveForceString, scope);
 	}
 
 	/**
@@ -117,7 +123,7 @@ public class ForceDirectedPlacement implements Runnable {
 
 			// displacements depending on attractive force
 			deltaPos.scale(this.forceAttractive(length, k));
-			
+
 			e.getV().getDisp().sub(deltaPos);
 			e.getU().getDisp().add(deltaPos);
 		}
@@ -158,22 +164,30 @@ public class ForceDirectedPlacement implements Runnable {
 		}
 		iteration++;
 	}
+
+	/**
+	 * Calculates the amount of the attractive force between vertices using the expression entered by the user.
+	 * @param d the distance between the two vertices
+	 * @param k 
+	 * @return 
+	 */
 	private double forceAttractive(double d, double k) {
-		return (d * d) / k;
+		varD.setValue(d);
+		varK.setValue(k);
+		return attractiveForceExpr.evaluate();
 	}
-	
+
+	/**
+	 * Calculates the amount of the repulsive force between vertices using the expression entered by the user.
+	 * @param d the distance between the two vertices
+	 * @param k 
+	 * @return 
+	 */
 	private double forceRepulsive(double d, double k) {
-		return (k * k) / d;
+		varD.setValue(d);
+		varK.setValue(k);
+		return repulsiveForceExpr.evaluate();
 	}
-
-
-//	private double forceAttractive(double d, double k) {
-//		return fa.eval(d, k).answer().toDouble();
-//	}
-//
-//	private double forceRepulsive(double d, double k) {
-//		return fr.eval(d, k).answer().toDouble();
-//	}
 
 	private Map<Double, Integer> optimizeCoolingRate() {
 		Map<Double, Integer> res = new HashMap<>();
@@ -198,15 +212,16 @@ public class ForceDirectedPlacement implements Runnable {
 
 	@Override
 	public void run() {
-//		if (chart) {
-//			SwingUtilities.invokeLater(new Runnable() {
-//				@Override
-//				public void run() {
-//					new CoolingChartJFrame(optimizeCoolingRate(false), optimizeCoolingRate(true)).setVisible(true);
-//				}
-//			});
-//		} else {
-			startSimulation();
-		
+		// if (chart) {
+		// SwingUtilities.invokeLater(new Runnable() {
+		// @Override
+		// public void run() {
+		// new CoolingChartJFrame(optimizeCoolingRate(false),
+		// optimizeCoolingRate(true)).setVisible(true);
+		// }
+		// });
+		// } else {
+		startSimulation();
+
 	}
 }

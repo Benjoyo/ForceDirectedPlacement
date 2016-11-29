@@ -2,6 +2,7 @@ package view.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,9 @@ import java.util.Map.Entry;
 
 import javax.vecmath.Vector2d;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.GnmRandomGraphGenerator;
 import org.jgrapht.generate.GraphGenerator;
@@ -21,7 +23,6 @@ import org.jgrapht.generate.RingGraphGenerator;
 import org.jgrapht.generate.StarGraphGenerator;
 import org.jgrapht.generate.WheelGraphGenerator;
 import org.jgrapht.graph.SimpleGraph;
-import org.quark.jasmine.Compile;
 
 import fdp.ForceDirectedPlacement;
 import fdp.graph.Edge;
@@ -42,6 +43,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import parsii.tokenizer.ParseException;
 
 public class WindowController {
 
@@ -78,14 +80,11 @@ public class WindowController {
 	@FXML
 	private TextField frameDelayTextField;
 	private int frameDelayValue;
-	
+
 	private GraphicsContext gc;
 
 	@FXML
 	private void initialize() {
-		
-		// init Jasmine compiler
-		Compile.init();
 
 		Canvas canvas = new Canvas(pane.getPrefWidth(), pane.getPrefHeight());
 		pane.getChildren().add(canvas);
@@ -186,11 +185,10 @@ public class WindowController {
 		}
 
 		GraphGenerator<Vertex, Edge, ?> gen = getSelectedGraphGenerator();
-		Map<String, String> forceFunctionMap = parseForceFunctions();
-		System.out.println(Arrays.toString(forceFunctionMap.entrySet().toArray()));
+		Pair<List<String>, List<String>> forceFunctions = parseForceFunctions();
 		List<Graph<Vertex, Edge>> graphs = new ArrayList<>();
 
-		for (Entry<String, String> entry : forceFunctionMap.entrySet()) {
+		for (int i = 0; i < forceFunctions.getLeft().size(); i++) {
 			Graph<Vertex, Edge> g = new SimpleGraph<>(new EdgeFactory());
 			gen.generateGraph(g, new VertexFactory(), null);
 			graphs.add(g);
@@ -198,7 +196,16 @@ public class WindowController {
 			int w = (int) pane.getWidth() - VERTEX_WIDTH;
 			int h = (int) pane.getHeight() - VERTEX_WIDTH;
 			boolean equi = mechEquiRadioButton.isSelected();
-			new Thread(new ForceDirectedPlacement(g, w, h, entry.getKey(), entry.getValue(), equi, criterionValue, coolingRateValue, frameDelayValue)).start();
+			String fa = forceFunctions.getLeft().get(i);
+			String fr = forceFunctions.getRight().get(i);
+			double c = criterionValue;
+			double cr = coolingRateValue;
+			int fd = frameDelayValue;
+			try {
+				new Thread(new ForceDirectedPlacement(g, w, h, fa, fr, equi, c, cr, fd)).start();
+			} catch (ParseException e1) {
+				showErrorDialog("Parsing Error", "Please make sure that the entered expressions are correct.");
+			}
 		}
 
 		new AnimationTimer() {
@@ -211,24 +218,20 @@ public class WindowController {
 		}.start();
 	}
 
-	private Map<String, String> parseForceFunctions() {
-		String[] fas = attractiveForcesTextField.getText().split(";");
-		String[] frs = repulsiveForcesTextField.getText().split(";");
+	private Pair<List<String>, List<String>> parseForceFunctions() {
+		List<String> fas = new ArrayList<>(Arrays.asList(attractiveForcesTextField.getText().split(";")));
+		List<String> frs = new ArrayList<>(Arrays.asList(repulsiveForcesTextField.getText().split(";")));
 
 		// fill up the shorter array to length of the longer one using its last
 		// element
-		if (fas.length > frs.length) {
-			Arrays.fill(frs, frs.length - 1, fas.length, frs[frs.length - 1]);
-		} else if (frs.length > fas.length) {
-			Arrays.fill(fas, fas.length - 1, frs.length, fas[fas.length - 1]);
+		int n = fas.size() - frs.size();
+		if (n > 0) { // fas longer than frs
+			frs.addAll(Collections.nCopies(n, fas.get(fas.size() - 1)));
+		} else if (n < 0) { // frs longer than fas
+			fas.addAll(Collections.nCopies(-n, frs.get(frs.size() - 1)));
 		}
-
-		Map<String, String> map = new HashMap<String, String>();
-		for (int index = 0; index < fas.length; index++) {
-			map.put(fas[index], frs[index]);
-		}
-
-		return map;
+		
+		return Pair.of(fas, frs);
 	}
 
 	private boolean checkFields() {

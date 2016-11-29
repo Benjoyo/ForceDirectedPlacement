@@ -33,21 +33,14 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>5.0.3</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.quark.jasmine</groupId>
-			<artifactId>jasmine</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/Jasmine.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.3</version>
+			<groupId>com.scireum</groupId>
+			<artifactId>parsii</artifactId>
+			<version>1.5</version>
 		</dependency>
 	</dependencies>
 </project>
