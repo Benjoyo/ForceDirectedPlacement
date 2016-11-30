@@ -19,10 +19,10 @@ public class CoolingChartJFrame extends JFrame {
 
 	private static final long serialVersionUID = -8440221437031065544L;
 
-	public CoolingChartJFrame(Map<Double, Integer> map, Map<Double, Integer> logMap) {
+	public CoolingChartJFrame(Map<Double, Integer> map) {
         super("Cooling Rate Experiment");
  
-        JPanel chartPanel = createChartPanel(map, logMap);
+        JPanel chartPanel = createChartPanel(map);
         add(chartPanel, BorderLayout.CENTER);
  
         setSize(800, 600);
@@ -30,19 +30,19 @@ public class CoolingChartJFrame extends JFrame {
         setLocationRelativeTo(null);
     }
  
-    private JPanel createChartPanel(Map<Double, Integer> map, Map<Double, Integer> logMap) {
+    private JPanel createChartPanel(Map<Double, Integer> map) {
     	String chartTitle = "Necessary Iterations for Different Cooling Rates";
         String xAxisLabel = "Cooling Rate";
         String yAxisLabel = "Iterations";
      
-        XYDataset dataset = createDataset(map, logMap);
+        XYDataset dataset = createDataset(map);
      
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL, rootPaneCheckingEnabled, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
      
         return new ChartPanel(chart);
     }
  
-    private XYDataset createDataset(Map<Double, Integer> map, Map<Double, Integer> logMap) {
+    private XYDataset createDataset(Map<Double, Integer> map) {
     	XYSeriesCollection dataset = new XYSeriesCollection();
     	XYSeries series = new XYSeries("f_a = d^2 / k");
     	XYSeries seriesLog = new XYSeries("f_a = k log d");
@@ -51,12 +51,12 @@ public class CoolingChartJFrame extends JFrame {
     		series.add(e.getKey(), e.getValue());
     	}
     	
-    	for (Entry<Double, Integer> e : logMap.entrySet()) {
-    		seriesLog.add(e.getKey(), e.getValue());
-    	}
+//    	for (Entry<Double, Integer> e : logMap.entrySet()) {
+//    		seriesLog.add(e.getKey(), e.getValue());
+//    	}
     	 
     	dataset.addSeries(series);
-    	dataset.addSeries(seriesLog);
+    	//dataset.addSeries(seriesLog);
     	return dataset;
     }
 }

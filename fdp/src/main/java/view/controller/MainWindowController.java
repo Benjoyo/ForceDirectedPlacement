@@ -1,12 +1,14 @@
 package view.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.vecmath.Vector2d;
 
@@ -25,6 +27,8 @@ import org.jgrapht.generate.WheelGraphGenerator;
 import org.jgrapht.graph.SimpleGraph;
 
 import fdp.ForceDirectedPlacement;
+import fdp.GraphConfiguration;
+import fdp.Parameter;
 import fdp.graph.Edge;
 import fdp.graph.EdgeFactory;
 import fdp.graph.Vertex;
@@ -32,6 +36,9 @@ import fdp.graph.VertexFactory;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -43,9 +50,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import parsii.tokenizer.ParseException;
 
-public class WindowController {
+public class MainWindowController {
 
 	private static final Color VERTEX_FILL_COLOR = Color.WHITESMOKE;
 	private static final Color VERTEX_CIRCLE_COLOR = Color.BLACK;
@@ -82,6 +91,17 @@ public class WindowController {
 	private int frameDelayValue;
 
 	private GraphicsContext gc;
+	private List<Graph<Vertex, Edge>> graphs = new ArrayList<>();
+
+	private AnimationTimer animation = new AnimationTimer() {
+		@Override
+		public void handle(long now) {
+			reset(gc.getCanvas());
+			for (Graph<Vertex, Edge> g : graphs) {
+				drawGraph(gc, g);
+			}
+		}
+	};
 
 	@FXML
 	private void initialize() {
@@ -107,7 +127,10 @@ public class WindowController {
 		repulsiveForcesTextField.setText("(k * k) / d");
 		coolingRateTextField.setText("0.01");
 		graphSizeTextField.setText("3");
-		frameDelayTextField.setText("25");
+		frameDelayTextField.setText("5");
+
+		// permanently draw any graphs
+		animation.start();
 	}
 
 	private void reset(Canvas canvas) {
@@ -117,7 +140,6 @@ public class WindowController {
 	}
 
 	private void drawGraph(GraphicsContext gc, Graph<Vertex, Edge> g) {
-		reset(gc.getCanvas());
 		for (Edge e : g.edgeSet()) {
 			Vector2d uPos = e.getU().getPos();
 			Vector2d vPos = e.getV().getPos();
@@ -153,7 +175,7 @@ public class WindowController {
 		return null;
 	}
 
-	private void showErrorDialog(String title, String msg) {
+	static void showErrorDialog(String title, String msg) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Error");
 		alert.setHeaderText(title);
@@ -174,67 +196,88 @@ public class WindowController {
 
 	@FXML
 	protected void findOptimumClicked(ActionEvent e) {
-
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/cooling_rate_settings.fxml"));
+		Parent root = null;
+		try {
+			root = loader.load();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		Stage stage = new Stage();
+		stage.initStyle(StageStyle.UTILITY);
+		stage.setTitle("Optimal Cooling Rate");
+		stage.setScene(new Scene(root));
+		stage.setResizable(false);
+		
+		FindOptimumController controller = loader.<FindOptimumController>getController();
+		controller.setGraphConfigurations(getGraphConfigurations());
+		
+		stage.showAndWait();
+		if (FindOptimumController.bestCoolingRate != 0) {
+			coolingRateTextField.setText(Double.toString(FindOptimumController.bestCoolingRate));
+		}
 	}
 
 	@FXML
 	protected void simulateClicked(ActionEvent e) {
-		if (!checkFields()) {
-			showErrorDialog("Are you sure that all fields are filled with correct values?", "");
-			return;
-		}
-
-		GraphGenerator<Vertex, Edge, ?> gen = getSelectedGraphGenerator();
-		Pair<List<String>, List<String>> forceFunctions = parseForceFunctions();
-		List<Graph<Vertex, Edge>> graphs = new ArrayList<>();
-
-		for (int i = 0; i < forceFunctions.getLeft().size(); i++) {
-			Graph<Vertex, Edge> g = new SimpleGraph<>(new EdgeFactory());
-			gen.generateGraph(g, new VertexFactory(), null);
-			graphs.add(g);
-
-			int w = (int) pane.getWidth() - VERTEX_WIDTH;
-			int h = (int) pane.getHeight() - VERTEX_WIDTH;
-			boolean equi = mechEquiRadioButton.isSelected();
-			String fa = forceFunctions.getLeft().get(i);
-			String fr = forceFunctions.getRight().get(i);
-			double c = criterionValue;
-			double cr = coolingRateValue;
-			int fd = frameDelayValue;
+		for (GraphConfiguration config : getGraphConfigurations()) {
+			Graph<Vertex, Edge> graph = config.generateGraph();
 			try {
-				new Thread(new ForceDirectedPlacement(g, w, h, fa, fr, equi, c, cr, fd)).start();
+				ForceDirectedPlacement.simulate(graph, config.getParameter());
 			} catch (ParseException e1) {
-				showErrorDialog("Parsing Error", "Please make sure that the entered expressions are correct.");
+				MainWindowController.showErrorDialog("Parsing Error", "Please make sure that the entered expressions are correct.");
 			}
+			this.graphs.add(graph);
 		}
-
-		new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-				for (Graph<Vertex, Edge> g : graphs) {
-					drawGraph(gc, g);
-				}
-			}
-		}.start();
 	}
 
-	private Pair<List<String>, List<String>> parseForceFunctions() {
+	private List<Pair<String, String>> parseForceFunctions() {
 		List<String> fas = new ArrayList<>(Arrays.asList(attractiveForcesTextField.getText().split(";")));
 		List<String> frs = new ArrayList<>(Arrays.asList(repulsiveForcesTextField.getText().split(";")));
-
-		// fill up the shorter array to length of the longer one using its last
-		// element
-		int n = fas.size() - frs.size();
-		if (n > 0) { // fas longer than frs
-			frs.addAll(Collections.nCopies(n, fas.get(fas.size() - 1)));
-		} else if (n < 0) { // frs longer than fas
-			fas.addAll(Collections.nCopies(-n, frs.get(frs.size() - 1)));
-		}
-		
-		return Pair.of(fas, frs);
+		return zipLists(fas, frs);
 	}
 
-	private boolean checkFields() {
+	private List<Pair<String, String>> zipLists(List<String> xs, List<String> ys) {
+		if (xs.size() >= ys.size()) {
+			return IntStream.range(0, xs.size()).mapToObj(i -> Pair.of(xs.get(i), ys.get(Math.min(i, ys.size() - 1))))
+					.collect(Collectors.toList());
+		} else {
+			return IntStream.range(0, ys.size()).mapToObj(i -> Pair.of(xs.get(Math.min(i, xs.size() - 1)), ys.get(i)))
+					.collect(Collectors.toList());
+		}
+	}
+
+	private List<GraphConfiguration> getGraphConfigurations() {
+		
+		List<GraphConfiguration> graphConfigs = new ArrayList<>();
+		
+		if (!parseAndCheckFields()) {
+			showErrorDialog("Are you sure that all fields are filled with correct values?", "");
+			return graphConfigs;
+		}
+		
+		List<Pair<String, String>> forceFunctions = parseForceFunctions();
+		this.graphs.clear();
+		
+		for (Pair<String, String> forces : forceFunctions) {
+			
+			Parameter p = new Parameter();
+			p.setFrameWidth((int) pane.getWidth() - VERTEX_WIDTH);
+			p.setFrameHeight((int) pane.getHeight() - VERTEX_WIDTH);
+			p.setEquilibriumCriterion(mechEquiRadioButton.isSelected());
+			p.setAttractiveForce(forces.getLeft());
+			p.setRepulsiveForce(forces.getRight());
+			p.setCriterion(criterionValue);
+			p.setCoolingRate(coolingRateValue);
+			p.setFrameDelay(frameDelayValue);
+			
+			graphConfigs.add(new GraphConfiguration(getSelectedGraphGenerator(), p));
+		}
+		return graphConfigs;
+	}
+
+	private boolean parseAndCheckFields() {
 		if ((graphSizeValue = NumberUtils.toInt(graphSizeTextField.getText())) == 0) {
 			return false;
 		}

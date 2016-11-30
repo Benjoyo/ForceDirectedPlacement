@@ -17,9 +17,9 @@ public class App extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 
-		Parent root = FXMLLoader.load(getClass().getResource("/force_directed_placement.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/main_window.fxml"));
 
-		primaryStage.setTitle("Force-directed Placement Demo");
+		primaryStage.setTitle("Force-directed Placement Simulation");
 
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setOnCloseRequest(e -> System.exit(0));
