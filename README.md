@@ -4,7 +4,6 @@ This is the *straight forward* variant of the algorithm that has a time complexi
 ## Installation
 Simply download and run the latest `.jar`-File found under `release`. 
 ## Usage
-##### Layout a graph
 * pick a stop criterion
     * **Iterations**: Simulation will definitly stop after **n** iterations, no matter what the result is
     * **Mechanical Equilibrium**: Simulate until the net forces on all vertices are below a certain **threshold**, but at most **1,000** iterations
