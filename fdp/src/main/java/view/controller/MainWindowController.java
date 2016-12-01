@@ -3,10 +3,7 @@ package view.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,15 +21,12 @@ import org.jgrapht.generate.LinearGraphGenerator;
 import org.jgrapht.generate.RingGraphGenerator;
 import org.jgrapht.generate.StarGraphGenerator;
 import org.jgrapht.generate.WheelGraphGenerator;
-import org.jgrapht.graph.SimpleGraph;
 
 import fdp.ForceDirectedPlacement;
 import fdp.GraphConfiguration;
 import fdp.Parameter;
 import fdp.graph.Edge;
-import fdp.graph.EdgeFactory;
 import fdp.graph.Vertex;
-import fdp.graph.VertexFactory;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -214,8 +208,8 @@ public class MainWindowController {
 		controller.setGraphConfigurations(getGraphConfigurations());
 		
 		stage.showAndWait();
-		if (FindOptimumController.bestCoolingRate != 0) {
-			coolingRateTextField.setText(Double.toString(FindOptimumController.bestCoolingRate));
+		if (controller.getBestCoolingRate() != 0) {
+			coolingRateTextField.setText(Double.toString(controller.getBestCoolingRate()));
 		}
 	}
 

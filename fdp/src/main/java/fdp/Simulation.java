@@ -40,7 +40,7 @@ public class Simulation implements Callable<Integer> {
 	private boolean equilibriumReached = false;
 
 	/**
-	 * 
+	 * Creates a new Simulation.
 	 * 
 	 * @param graph
 	 * @param p
@@ -55,6 +55,7 @@ public class Simulation implements Callable<Integer> {
 		this.coolingRate = p.getCoolingRate();
 		this.delay = p.getFrameDelay();
 
+		// parse the force strings into Expressions that can be evaluated multiple times
 		attractiveForceExpr = Parser.parse(p.getAttractiveForce(), scope);
 		repulsiveForceExpr = Parser.parse(p.getRepulsiveForce(), scope);
 	}
@@ -62,7 +63,7 @@ public class Simulation implements Callable<Integer> {
 	/**
 	 * Starts the simulation.
 	 * 
-	 * @return number of iterations used
+	 * @return number of iterations used until criterion is met
 	 */
 	private int startSimulation() {
 
@@ -176,7 +177,7 @@ public class Simulation implements Callable<Integer> {
 	 * @param d
 	 *            the distance between the two vertices
 	 * @param k
-	 * @return
+	 * @return amount of force
 	 */
 	private double forceAttractive(double d, double k) {
 		varD.setValue(d);
@@ -191,7 +192,7 @@ public class Simulation implements Callable<Integer> {
 	 * @param d
 	 *            the distance between the two vertices
 	 * @param k
-	 * @return
+	 * @return amount of force
 	 */
 	private double forceRepulsive(double d, double k) {
 		varD.setValue(d);

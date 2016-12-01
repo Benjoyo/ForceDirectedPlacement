@@ -1,5 +1,9 @@
 package fdp;
 
+/**
+ * Container class for holding parameters for a simulation. 
+ * @author Bennet
+ */
 public class Parameter {
 
 	private int frameWidth;
