@@ -1,5 +1,5 @@
 # ForceDirectedPlacement
-Java implementation of **Eades'** graph layout algorithm using **force-directed placement**.
+Java implementation of **Fruchterman and Reingold's** graph layout algorithm using **force-directed placement**.
 This is the *straight forward* variant of the algorithm that has a time complexity of **O(|V|²)**.
 ## Installation
 Simply download and run the latest `.jar`-File found under `release`. 
