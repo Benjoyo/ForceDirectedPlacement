@@ -24,6 +24,8 @@ public class Simulation implements Callable<Integer> {
 	private double criterion;
 	private double coolingRate;
 	private int delay;
+	
+	private static final double C = 0.4;
 
 	private int iteration = 0;
 
@@ -71,7 +73,7 @@ public class Simulation implements Callable<Integer> {
 		equilibriumReached = false;
 
 		area = Math.min(frameWidth * frameWidth, frameHeight * frameHeight);
-		k = Math.sqrt(area / graph.vertexSet().size());
+		k = C * Math.sqrt(area / graph.vertexSet().size());
 		t = frameWidth / 10;
 
 		// assign random initial positions to all vertices
