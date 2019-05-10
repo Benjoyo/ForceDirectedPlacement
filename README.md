@@ -1,4 +1,6 @@
 # ForceDirectedPlacement
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Java implementation of **Fruchterman and Reingold's** graph layout algorithm using **force-directed placement**.
 This is the *straight forward* variant of the algorithm that has a time complexity of **O(|V|²)**.
 ## Installation
